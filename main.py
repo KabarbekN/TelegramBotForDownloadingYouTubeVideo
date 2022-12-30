@@ -40,6 +40,20 @@ def get_user_text(message):
     markup.add(user_commands, start)
     if message.text == 'help':
         bot.send_message(message.chat.id, "Специальные комманды", reply_markup=markup)
+    elif "sound" in message.text:
+        youtubeSound = YouTube(message.text[5:])
+        youtubeSound = youtubeSound.streams.filter(only_audio=True).desc().first()
+        try:
+            bot.send_message(message.chat.id, "Downloading sound begin...")
+            youtubeSound.download()
+            bot.send_message(message.chat.id, "<b>Downloaded</b>", parse_mode='html')
+            fileSoundName = youtubeSound.default_filename
+            title = youtubeSound.title
+            bot.send_message(message.chat.id, f"Sound title{title}")
+            sound = open(fileSoundName, 'rb')
+            bot.send_audio(message.chat.id, sound)
+        except:
+            bot.send_message(message.chat.id, "Something goes wrong", parse_mode='html')
     elif "download" in message.text:
         youtubeObject = YouTube(message.text[8:])
         youtubeObject = youtubeObject.streams.get_highest_resolution()
